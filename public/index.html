@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galaxy Explorer App</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+            background: radial-gradient(circle, #090d2a, #1e3c72, #162c53);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .stars {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: starTwinkle 3s infinite alternate;
+        }
+
+        .shooting-star {
+            position: absolute;
+            width: 2px;
+            height: 100px;
+            background: linear-gradient(to bottom, transparent, white);
+            animation: shootingStar 1.5s linear infinite;
+            opacity: 0.8;
+        }
+
+        .shooting-star:nth-child(1) {
+            left: 10%;
+            top: 20%;
+            animation-delay: 0s;
+        }
+
+        .shooting-star:nth-child(2) {
+            left: 30%;
+            top: 40%;
+            animation-delay: 1s;
+        }
+
+        .shooting-star:nth-child(3) {
+            left: 50%;
+            top: 10%;
+            animation-delay: 2s;
+        }
+
+        .shooting-star:nth-child(4) {
+            left: 70%;
+            top: 30%;
+            animation-delay: 3s;
+        }
+
+        .shooting-star:nth-child(5) {
+            left: 90%;
+            top: 50%;
+            animation-delay: 4s;
+        }
+
+        @keyframes shootingStar {
+            from {
+                transform: translate(0, 0) rotate(45deg);
+                opacity: 1;
+            }
+            to {
+                transform: translate(300px, 300px) rotate(45deg);
+                opacity: 0;
+            }
+        }
+
+        .container {
+            text-align: center;
+            animation: fadeIn 2s ease-in-out;
+            z-index: 10;
+        }
+
+        h1 {
+            font-size: 5rem;
+            margin: 0;
+            animation: textGlow 2s ease-in-out infinite alternate;
+        }
+
+        p {
+            font-size: 1.5rem;
+            margin-top: 1rem;
+            font-style: italic;
+        }
+
+        .button {
+            margin-top: 1rem;
+            padding: 1rem 2rem;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(90deg, #ff7e5f, #feb47b);
+            border: none;
+            border-radius: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .button:hover {
+            transform: scale(1.1);
+            background: linear-gradient(90deg, #feb47b, #ff7e5f);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .button:active {
+            transform: scale(1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .planet-list {
+            margin-top: 20px;
+            display: none;
+            animation: fadeIn 1s ease-in-out;
+            z-index: 5;
+            position: relative;
+        }
+
+        .planet-card {
+            display: flex;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            margin: 10px;
+            padding: 15px;
+            width: 80%;
+            max-width: 600px;
+            text-align: left;
+            color: white;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .planet-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(255, 165, 0, 0.5);
+        }
+
+        .planet-card img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin-right: 20px;
+            border: 2px solid rgba(255, 165, 0, 0.9);
+        }
+
+        .planet-card h3 {
+            margin: 0;
+            font-size: 1.5rem;
+            color: rgba(255, 165, 0, 1);
+        }
+
+        .planet-details {
+            display: none;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.8);
+            width: 80%;
+            max-width: 500px;
+            text-align: center;
+            animation: fadeIn 0.5s ease-in-out;
+            z-index: 10;
+        }
+
+        .planet-details img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            margin-bottom: 20px;
+        }
+
+        .planet-details h3 {
+            margin: 0 0 10px;
+        }
+
+        .planet-details button {
+            margin-top: 15px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            color: white;
+            background: linear-gradient(90deg, #ff7e5f, #feb47b);
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .planet-details button:hover {
+            background: linear-gradient(90deg, #feb47b, #ff7e5f);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes textGlow {
+            from { text-shadow: 0 0 10px #ff7e5f, 0 0 20px #feb47b; }
+            to { text-shadow: 0 0 20px #ff7e5f, 0 0 30px #feb47b; }
+        }
+
+        footer {
+            position: absolute;
+            bottom: 10px;
+            width: 100%;
+            text-align: center;
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+    </style>
+</head>
+<body>
+    <div class="stars"></div>
+    <div class="shooting-star"></div>
+    <div class="shooting-star"></div>
+    <div class="shooting-star"></div>
+    <div class="shooting-star"></div>
+    <div class="shooting-star"></div>
+    <div class="container">
+        <h1>Explore the Galaxy!</h1>
+        <p>Embark on an adventure through the stars with this interactive web app provided to you via a container.</p>
+        <button class="button" onclick="togglePlanets()">Discover a Planet!</button>
+        <div class="planet-list" id="planet-list">
+            <h2>Planets in the Solar System</h2>
+            <div id="planet-cards"></div>
+        </div>
+    </div>
+    <div class="planet-details" id="planet-details">
+        <img id="planet-details-image" src="" alt="Planet Image">
+        <h3 id="planet-details-name"></h3>
+        <p id="planet-details-info"></p>
+        <button onclick="closePlanetDetails()">Close</button>
+    </div>
+    <footer>© 2024 Galaxy Explorer | Your journey through the stars begins here!</footer>
+
+    <script>
+        const planets = [
+            { name: 'Mercury', image: 'https://space-facts.com/wp-content/uploads/mercury-transparent.png', info: 'Smallest planet, made of rock and metal.', details: 'Mercury is the closest planet to the Sun and has no moons. It has a thin exosphere and is covered in craters.' },
+            { name: 'Venus', image: 'https://space-facts.com/wp-content/uploads/venus-transparent.png', info: 'Thick, toxic atmosphere and hottest planet.', details: 'Venus has a dense atmosphere of carbon dioxide and is known as Earth’s twin because of its similar size.' },
+            { name: 'Earth', image: 'https://space-facts.com/wp-content/uploads/earth-transparent.png', info: 'Only planet known to support life.', details: 'Earth is the third planet from the Sun and the only astronomical object known to harbor life.' },
+            { name: 'Mars', image: 'https://space-facts.com/wp-content/uploads/mars-transparent.png', info: 'Red planet, potential for past water.', details: 'Mars is home to the largest volcano and canyon in the solar system and has signs of liquid water in the past.' },
+            { name: 'Jupiter', image: 'https://space-facts.com/wp-content/uploads/jupiter-transparent.png', info: 'Largest planet, made mostly of gas.', details: 'Jupiter has a Great Red Spot, a storm larger than Earth, and at least 79 moons.' },
+            { name: 'Saturn', image: 'https://space-facts.com/wp-content/uploads/saturn-transparent.png', info: 'Famous for its beautiful ring system.', details: 'Saturn is a gas giant with the most extensive and complex ring system in the solar system.' },
+            { name: 'Uranus', image: 'https://space-facts.com/wp-content/uploads/uranus-transparent.png', info: 'Ice giant with a tilted rotation axis.', details: 'Uranus rotates on its side and is an ice giant with faint rings and at least 27 moons.' },
+            { name: 'Neptune', image: 'https://space-facts.com/wp-content/uploads/neptune-transparent.png', info: 'Blue planet with supersonic winds.', details: 'Neptune is known for its deep blue color and the fastest winds in the solar system.' }
+        ];
+
+        let planetsVisible = false;
+
+        function togglePlanets() {
+            const planetList = document.getElementById('planet-list');
+            const planetCards = document.getElementById('planet-cards');
+
+            if (planetsVisible) {
+                planetList.style.display = 'none';
+                planetsVisible = false;
+                return;
+            }
+
+            planetCards.innerHTML = '';
+            planets.forEach(planet => {
+                const card = document.createElement('div');
+                card.className = 'planet-card';
+                card.onclick = () => showPlanetDetails(planet);
+
+                const img = document.createElement('img');
+                img.src = planet.image;
+                img.alt = planet.name;
+
+                const details = document.createElement('div');
+
+                const name = document.createElement('h3');
+                name.textContent = planet.name;
+
+                const info = document.createElement('p');
+                info.textContent = planet.info;
+
+                details.appendChild(name);
+                details.appendChild(info);
+
+                card.appendChild(img);
+                card.appendChild(details);
+
+                planetCards.appendChild(card);
+            });
+
+            planetList.style.display = 'block';
+            planetsVisible = true;
+        }
+
+        function showPlanetDetails(planet) {
+            const details = document.getElementById('planet-details');
+            const img = document.getElementById('planet-details-image');
+            const name = document.getElementById('planet-details-name');
+            const info = document.getElementById('planet-details-info');
+
+            img.src = planet.image;
+            name.textContent = planet.name;
+            info.textContent = planet.details;
+
+            details.style.display = 'block';
+        }
+
+        function closePlanetDetails() {
+            const details = document.getElementById('planet-details');
+            details.style.display = 'none';
+        }
+    </script>
+</body>
+</html>
